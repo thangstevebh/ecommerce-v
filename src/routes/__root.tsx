@@ -1,6 +1,5 @@
 import {
   HeadContent,
-  Link,
   Scripts,
   createRootRouteWithContext,
 } from "@tanstack/react-router";
@@ -14,6 +13,8 @@ import StoreDevtools from "../lib/demo-store-devtools";
 import appCss from "../styles.css?url";
 
 import type { QueryClient } from "@tanstack/react-query";
+import { NotFound } from "@/components/app/not-found";
+import { Toaster } from "sonner";
 
 interface MyRouterContext {
   queryClient: QueryClient;
@@ -42,17 +43,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
   }),
 
   shellComponent: RootDocument,
-  notFoundComponent: () => {
-    return (
-      <div style={{ padding: "2rem", textAlign: "center" }}>
-        <h2>404 - Page Not Found</h2>
-        <p>Sorry, the page you are looking for does not exist.</p>
-        <Link to="/" style={{ color: "blue", textDecoration: "underline" }}>
-          Go back to Home
-        </Link>
-      </div>
-    );
-  },
+  notFoundComponent: () => <NotFound />,
 });
 
 function RootDocument({ children }: { children: React.ReactNode }) {
@@ -63,6 +54,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       </head>
       <body>
         {children}
+        <Toaster />
         <TanStackDevtools
           config={{
             position: "bottom-right",

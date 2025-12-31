@@ -4,6 +4,7 @@ import * as TanstackQuery from "./integrations/tanstack-query/root-provider";
 
 // Import the generated route tree
 import { routeTree } from "./routeTree.gen";
+import { NotFound } from "./components/app/not-found";
 
 // Create a new router instance
 export const getRouter = () => {
@@ -16,6 +17,8 @@ export const getRouter = () => {
     },
 
     defaultPreload: "intent",
+    defaultNotFoundComponent: () => <NotFound />,
+    scrollRestoration: true,
   });
 
   setupRouterSsrQueryIntegration({

@@ -9,38 +9,100 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as AppRouteImport } from './routes/_app'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AppHomepageRouteImport } from './routes/_app/homepage'
+import { Route as AppProductIndexRouteImport } from './routes/_app/product/index'
+import { Route as AppDashboardIndexRouteImport } from './routes/_app/dashboard/index'
+import { Route as AppProductProductIdRouteImport } from './routes/_app/product/$productId'
 
+const AppRoute = AppRouteImport.update({
+  id: '/_app',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AppHomepageRoute = AppHomepageRouteImport.update({
+  id: '/homepage',
+  path: '/homepage',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppProductIndexRoute = AppProductIndexRouteImport.update({
+  id: '/product/',
+  path: '/product/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppDashboardIndexRoute = AppDashboardIndexRouteImport.update({
+  id: '/dashboard/',
+  path: '/dashboard/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppProductProductIdRoute = AppProductProductIdRouteImport.update({
+  id: '/product/$productId',
+  path: '/product/$productId',
+  getParentRoute: () => AppRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/homepage': typeof AppHomepageRoute
+  '/product/$productId': typeof AppProductProductIdRoute
+  '/dashboard': typeof AppDashboardIndexRoute
+  '/product': typeof AppProductIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/homepage': typeof AppHomepageRoute
+  '/product/$productId': typeof AppProductProductIdRoute
+  '/dashboard': typeof AppDashboardIndexRoute
+  '/product': typeof AppProductIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_app': typeof AppRouteWithChildren
+  '/_app/homepage': typeof AppHomepageRoute
+  '/_app/product/$productId': typeof AppProductProductIdRoute
+  '/_app/dashboard/': typeof AppDashboardIndexRoute
+  '/_app/product/': typeof AppProductIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/homepage'
+    | '/product/$productId'
+    | '/dashboard'
+    | '/product'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/homepage' | '/product/$productId' | '/dashboard' | '/product'
+  id:
+    | '__root__'
+    | '/'
+    | '/_app'
+    | '/_app/homepage'
+    | '/_app/product/$productId'
+    | '/_app/dashboard/'
+    | '/_app/product/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AppRoute: typeof AppRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/_app': {
+      id: '/_app'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof AppRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,11 +110,56 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_app/homepage': {
+      id: '/_app/homepage'
+      path: '/homepage'
+      fullPath: '/homepage'
+      preLoaderRoute: typeof AppHomepageRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/product/': {
+      id: '/_app/product/'
+      path: '/product'
+      fullPath: '/product'
+      preLoaderRoute: typeof AppProductIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/dashboard/': {
+      id: '/_app/dashboard/'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof AppDashboardIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/product/$productId': {
+      id: '/_app/product/$productId'
+      path: '/product/$productId'
+      fullPath: '/product/$productId'
+      preLoaderRoute: typeof AppProductProductIdRouteImport
+      parentRoute: typeof AppRoute
+    }
   }
 }
 
+interface AppRouteChildren {
+  AppHomepageRoute: typeof AppHomepageRoute
+  AppProductProductIdRoute: typeof AppProductProductIdRoute
+  AppDashboardIndexRoute: typeof AppDashboardIndexRoute
+  AppProductIndexRoute: typeof AppProductIndexRoute
+}
+
+const AppRouteChildren: AppRouteChildren = {
+  AppHomepageRoute: AppHomepageRoute,
+  AppProductProductIdRoute: AppProductProductIdRoute,
+  AppDashboardIndexRoute: AppDashboardIndexRoute,
+  AppProductIndexRoute: AppProductIndexRoute,
+}
+
+const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AppRoute: AppRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
